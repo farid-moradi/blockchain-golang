@@ -158,7 +158,7 @@ func (bc *Blockchain) StartMining() {
 func (bc *Blockchain) CalculateTotalAmount(blockchainAddress string) float32 {
 	var totalAmount float32
 	for _, v := range bc.chain {
-		for _, t := range v.GetBlockTransactions() {
+		for _, t := range v.Transactions() {
 			if t.GetSenderBlockchainAddress() == blockchainAddress {
 				totalAmount -= t.GetValueBlockchainAddress()
 			} else if t.GetRecipientBlockchainAddress() == blockchainAddress {

@@ -28,10 +28,6 @@ func (b *Block) Transactions() []*transaction.Transaction {
 	return b.transactions
 }
 
-func (b *Block) GetBlockTransactions() []*transaction.Transaction {
-	return b.transactions
-}
-
 func SetBlockValues(nonce int, timestamp int64, previousHash [32]byte, transactions []*transaction.Transaction) *Block {
 	b := new(Block)
 	b.nonce = nonce
