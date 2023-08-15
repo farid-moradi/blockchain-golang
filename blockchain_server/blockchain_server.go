@@ -32,7 +32,7 @@ func (bcs *BlockchainServer) GetBlockchain() *blockchain.Blockchain {
 	if !ok {
 		// before creating a new blockchain we need the address of the miner creating the blockchain
 		minersWallet := wallet.NewWallet()
-		bc := blockchain.NewBlockChain(minersWallet.BlockchainAddress(), bcs.Port())
+		bc = blockchain.NewBlockChain(minersWallet.BlockchainAddress(), bcs.Port())
 		cache["blockchain"] = bc
 		log.Printf("private_key: %v\n", minersWallet.PrivateKeyStr())
 		log.Printf("public_key: %v\n", minersWallet.PublicKeyStr())

@@ -22,7 +22,7 @@
             })
 
 
-            $("#send_money_button").click(function() {
+            $("#send_money_button").click(function () {
                 let transaction_data = {
                     'sender_private_key': $('#private_key').val(),
                     'sender_public_key': $('#public_key').val(),
@@ -47,27 +47,27 @@
             });
 
             function reload_amount() {
-                 let data = {'blockchain_address': $('#blockchain_address').val()}
-                 $.ajax({
-                     url: '/wallet/amount',
-                     type: 'GET',
-                     data: data,
-                     success: function (response) {
-                         let amount = response['amount'];
-                         $('#wallet_amount').text(amount);
-                         console.info(amount)
-                     },
-                     error: function(error) {
-                         console.error(error)
-                     }
-                 })
-             }
+                let data = { 'blockchain_address': $('#blockchain_address').val() }
+                $.ajax({
+                    url: '/wallet/amount',
+                    type: 'GET',
+                    data: data,
+                    success: function (response) {
+                        let amount = response['amount'];
+                        $('#wallet_amount').text(amount);
+                        console.info(amount)
+                    },
+                    error: function (error) {
+                        console.error(error)
+                    }
+                })
+            }
 
-             /* $('#reload_wallet').click(function(){
-                 reload_amount();
-             }); */
+            // $('#reload_wallet').click(function () {
+            //     reload_amount();
+            // });
 
-             setInterval(reload_amount, 3000)
+            setInterval(reload_amount, 3000)
 
         });
     </script>

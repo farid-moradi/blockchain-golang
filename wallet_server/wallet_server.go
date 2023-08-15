@@ -69,13 +69,6 @@ type ResponseBody struct {
 func (ws *WalletServer) Transition(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case http.MethodPost:
-		/*data, _ := ioutil.ReadAll(req.Body)
-		fmt.Printf("%s\n", data)
-		var responseTransaction ResponseTransaction
-		err := json.Unmarshal(data, &responseTransaction)
-		if err != nil {
-			log.Println("Can not Unmarshal Json")
-		}*/
 
 		decoder := json.NewDecoder(req.Body)
 		var t wallet.TransactionRequest

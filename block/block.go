@@ -16,23 +16,11 @@ type Block struct {
 	transactions []*transaction.Transaction
 }
 
-func (b *Block) PreviousHash() [32]byte {
-	return b.previousHash
-}
-
-func (b *Block) Nonce() int {
-	return b.nonce
-}
-
-func (b *Block) Transactions() []*transaction.Transaction {
-	return b.transactions
-}
-
-func SetBlockValues(nonce int, timestamp int64, previousHash [32]byte, transactions []*transaction.Transaction) *Block {
+func NewBlockWithoutTime(nonce int, previousHash [32]byte, transactions []*transaction.Transaction) *Block {
 	b := new(Block)
 	b.nonce = nonce
 	b.previousHash = previousHash
-	b.timestamp = timestamp
+	b.timestamp = 0
 	b.transactions = transactions
 	return b
 }
@@ -46,8 +34,16 @@ func NewBlock(nonce int, previousHash [32]byte, transactions []*transaction.Tran
 	return b
 }
 
-func (b *Block) SetNonce(nonce int) {
-	b.nonce = nonce
+func (b *Block) PreviousHash() [32]byte {
+	return b.previousHash
+}
+
+func (b *Block) Nonce() int {
+	return b.nonce
+}
+
+func (b *Block) Transactions() []*transaction.Transaction {
+	return b.transactions
 }
 
 func (b *Block) MarshalJSON() ([]byte, error) {

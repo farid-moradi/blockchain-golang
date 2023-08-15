@@ -18,7 +18,7 @@ import (
 
 const (
 	MINING_DIFFICULTY                = 3
-	MINING_SENDER                    = "blockchain address"
+	MINING_SENDER                    = "THE BLOCKCHAIN"
 	MINING_REWARD                    = 1.0
 	MINING_TIMER_SEC                 = 20
 	BLOCKCHAIN_PORT_RANGE_START      = 5000
@@ -34,16 +34,16 @@ type Blockchain struct {
 	blockchainAddress string
 	port              uint16
 	mux               sync.Mutex
-	neighbors         []string
 	muxNeighbors      sync.Mutex
+	neighbors         []string
 }
 
 func NewBlockChain(blockchainAddress string, port uint16) *Blockchain {
 	b := &block.Block{}
 	bc := new(Blockchain)
 	bc.blockchainAddress = blockchainAddress
-	bc.port = port
 	bc.CreateBlock(0, b.Hash())
+	bc.port = port
 	return bc
 }
 
@@ -53,7 +53,7 @@ func (bc *Blockchain) Chain() []*block.Block {
 
 func (bc *Blockchain) Run() {
 	bc.StartSyncNeighbors()
-	// immidiatelly after starting a blockchain server, we need to find other neighbors
+	// immediatelly after starting a blockchain server, we need to find other neighbors
 	// after that every server that has been started need to get the correct chain from
 	// other blockchain servers by calling the resolve conflict method
 	bc.ResolveConflicts()
@@ -108,6 +108,18 @@ func (bc *Blockchain) MarshalJSON() ([]byte, error) {
 	})
 }
 
+func (bc *Blockchain) UnmarshalJSON(data []byte) error {
+	v := &struct {
+		Blocks *[]*block.Block `json:"chain"`
+	}{
+		Blocks: &bc.chain,
+	}
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (bc *Blockchain) CopyTransactionPool() []*transaction.Transaction {
 	transactions := make([]*transaction.Transaction, 0)
 	for _, t := range bc.transactionPool {
@@ -117,8 +129,10 @@ func (bc *Blockchain) CopyTransactionPool() []*transaction.Transaction {
 }
 
 func (bc *Blockchain) ProofOfWork() int {
+	transactions := bc.CopyTransactionPool()
+	previousHash := bc.LastBlock().Hash()
 	nonce := 0
-	for !bc.ValidProof(nonce, bc.LastBlock().Hash(), bc.CopyTransactionPool(), MINING_DIFFICULTY) {
+	for !bc.ValidProof(nonce, previousHash, transactions, MINING_DIFFICULTY) {
 		nonce++
 	}
 	return nonce
@@ -127,12 +141,12 @@ func (bc *Blockchain) ProofOfWork() int {
 func (bc *Blockchain) Mining() bool {
 	bc.mux.Lock()
 	defer bc.mux.Unlock()
-	// if we don't use this if, a miner can get rewarder even when there is no transaction
+	// if we don't use this if statement, a miner can get rewarder even when there is no transaction
 	// we are going to comment this if statement off, because in real world mining can be
 	// preform with 0 transaction and of course it is not likely to happen
-	/* if len(bc.transactionPool) == 0 {
-		return false
-	} */
+	// if len(bc.transactionPool) == 0 {
+	// 	return false
+	// }
 	bc.AddTransaction(MINING_SENDER, bc.blockchainAddress, MINING_REWARD, nil, nil)
 	previousHash := bc.LastBlock().Hash()
 	nonce := bc.ProofOfWork()
@@ -194,7 +208,7 @@ func (bc *Blockchain) LastBlock() *block.Block {
 
 func (bc *Blockchain) ValidProof(nonce int, previousHash [32]byte, transactions []*transaction.Transaction, difficulty int) bool {
 	zeros := strings.Repeat("0", difficulty)
-	guessBlock := block.SetBlockValues(nonce, 0, previousHash, transactions)
+	guessBlock := block.NewBlockWithoutTime(nonce, previousHash, transactions)
 	guessBlockHashStr := fmt.Sprintf("%x", guessBlock.Hash())
 	return guessBlockHashStr[:difficulty] == zeros
 }
